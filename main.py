@@ -6,9 +6,8 @@ import time
 print("Программа инициализируется...")
 
 config = configparser.ConfigParser()
-config.read("config.ini")
+config.read("config.ini", encoding='utf-8')
 app_id = '543726720289734656'
-
 
 def run():
     try:
