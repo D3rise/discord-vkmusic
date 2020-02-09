@@ -2,11 +2,19 @@ import vk_api
 import rpc
 import configparser
 import time
+from chardet.universaldetector import UniversalDetector
 
 print("Программа инициализируется...")
 
 config = configparser.ConfigParser()
-config.read("config.ini", encoding='utf-8')
+detector = UniversalDetector()
+with open('config.ini', 'rb') as fh:
+    for line in fh:
+        detector.feed(line)
+        if detector.done:
+            break
+    detector.close()
+config.read("config.ini", encoding=detector.result["encoding"])
 app_id = '543726720289734656'
 
 def run():
