@@ -40,7 +40,7 @@ def run():
 
                 activity.update({'state': state})
             else:
-                curr_music = vk.users.get(user_ids=config['VK']['id'], fields="status")[0]['status_audio']
+                curr_music = res['status_audio']
                 state = f"Автор - {curr_music['artist']}"
                 details = f"Трек - {curr_music['title']}"
                 activity.update({'state': state, 'details': details})
