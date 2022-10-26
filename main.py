@@ -33,6 +33,7 @@ def run():
                 "large_image": large_image
             }
             res = vk.users.get(user_ids=config['VK']['id'], fields="status")[0]
+            print(res)
 
             if "status_audio" not in res:
                 state = "Музыка не воспроизводится"
@@ -46,7 +47,8 @@ def run():
 
                 state = f"Автор - {curr_music['artist']}"
                 details = f"Трек - {curr_music['title']}"
-                large_image = curr_music["album"]["thumb"]["photo_300"]
+                if 'album' in curr_music and 'thumb' in curr_music['album']:
+                    large_image = curr_music["album"]["thumb"]["photo_300"]
 
                 activity.update(
                     {'state': state, 'details': details,
