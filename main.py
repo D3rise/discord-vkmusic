@@ -1,5 +1,5 @@
 import vk_api
-import rpc
+import pypresence
 import configparser
 import time
 from chardet.universaldetector import UniversalDetector
@@ -17,19 +17,20 @@ with open('config.ini', 'rb') as fh:
 config.read("config.ini", encoding=detector.result["encoding"])
 app_id = '543726720289734656'
 
+
 def run():
     try:
-        rpc_obj = rpc.DiscordIpcClient.for_platform(app_id)
+        presence = pypresence.Presence(app_id)
+        presence.connect()
         vk_session = vk_api.VkApi(token=config['VK']['app_token'])
         vk = vk_session.get_api()
 
         print("Приложение было проинициализировано. Запуск через 5 секунд.")
         time.sleep(5)
         while True:
+            large_image = "vk"
             activity = {
-                "assets": {
-                    "large_image": "vk"
-                }
+                "large_image": large_image
             }
             res = vk.users.get(user_ids=config['VK']['id'], fields="status")[0]
 
@@ -38,14 +39,20 @@ def run():
                 if "details" in activity:
                     activity.pop("details")
 
-                activity.update({'state': state})
+                large_image = 'vk'
+                activity.update({'state': state, 'large_image': large_image})
             else:
                 curr_music = res['status_audio']
+
                 state = f"Автор - {curr_music['artist']}"
                 details = f"Трек - {curr_music['title']}"
-                activity.update({'state': state, 'details': details})
+                large_image = curr_music["album"]["thumb"]["photo_300"]
 
-            rpc_obj.set_activity(activity)
+                activity.update(
+                    {'state': state, 'details': details,
+                     'large_image': large_image})
+
+            presence.update(**activity)
             time.sleep(15)
     except OSError:
         print("fuck. Restarting.")
